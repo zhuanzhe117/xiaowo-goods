@@ -1,0 +1,66 @@
+# 参考 http://www.tuicool.com/articles/veUjQba
+# Web容器配置
+server:
+  port: 8090
+  undertow:
+    accesslog:
+      # 开启Undertow访问日志
+      enabled: true
+      dir: /data/logs/
+
+
+eureka:
+  #EurekaInstanceConfigBean
+  instance:
+    preferIpAddress: true
+    instanceId: ${spring.cloud.client.hostname}:${server.port}
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    healthcheck:
+      enabled: false
+    serviceUrl:
+      defaultZone: http://192.168.51.218:1111/eureka/
+
+#hystrix:
+#  command:
+#    # Globally config
+#    default:
+#      execution:
+#        # Disable Hystrix timeout globally (for all services)
+#        timeout.enabled: false
+#        # Set Hystrix timeout to 60s globally
+#        #isolation.thread.timeoutInMilliseconds: 60000
+#
+#  threadpool:
+#    default:
+#      coreSize: 2000
+#      maxQueueSize: 2000
+#      queueSizeRejectionThreshold: 500
+
+spring:
+  dataSource:
+    driverClassName: com.mysql.jdbc.Driver
+    writeConfig:
+      url: jdbc:mysql://127.0.0.1:3306/xiaowo_goods?useUnicode=true&characterEncoding=UTF-8
+      username: root
+      password:
+    readConfig:
+      url: jdbc:mysql://127.0.0.1:3306/xiaowo_goods?useUnicode=true&characterEncoding=UTF-8
+      username: root
+      password:
+
+# mybatis配置
+mybatis:
+    # 批量插入或更新时，每次事务执行的插入或更新数据行数  
+  writeMapperLocations: classpath:mapper/write/**.xml
+  readMapperLocations: classpath:mapper/read/**.xml
+  config: mybatis-config.xml
+  rows_per_transaction: 500
+
+# Log 配置 级别大写 TRACE|DEBUG|INFO|WARN|ERROR
+logging:
+  level:
+    #root: INFO
+    com.xiaowo: DEBUG
+

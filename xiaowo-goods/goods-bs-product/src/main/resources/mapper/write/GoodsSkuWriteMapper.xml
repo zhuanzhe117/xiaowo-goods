@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaowo.goods.product.mapper.write.IGoodsSkuWriteMapper">
+
+    <insert id="insertSkuBase" parameterType="SkuBasePojo">
+        INSERT INTO goods_sku_base (
+        sku_id,
+        goods_id,
+        stock,
+        warn_stock,
+        stock_unit,
+        cost_price,
+        sell_price,
+        original_price
+        )
+        VALUES
+        (
+        #{skuId},
+        #{goodsId},
+        #{stock},
+        #{warnStock},
+        #{stockUnit},
+        #{costPrice},
+        #{sellPrice},
+        #{originalPrice}
+        )
+    </insert>
+
+</mapper>

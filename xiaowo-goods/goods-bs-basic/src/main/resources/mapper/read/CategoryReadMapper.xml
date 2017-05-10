@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaowo.goods.basic.mapper.read.ICategoryReadMapper">
+
+    <resultMap id="CategoryPojoMap" type="com.xiaowo.goods.basicapi.category.pojo.CategoryPojo">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="category_name" property="categoryName" jdbcType="VARCHAR"/>
+        <result column="pid" property="pid" jdbcType="BIGINT"/>
+        <result column="biz_id" property="bizId" jdbcType="BIGINT"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="str_level" property="strLevel" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="CategoryJsonMap" type="com.xiaowo.goods.basicapi.category.json.CategoryJson">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="category_name" property="categoryName" jdbcType="VARCHAR"/>
+        <result column="pid" property="pid" jdbcType="BIGINT"/>
+        <result column="biz_id" property="bizId" jdbcType="BIGINT"/>
+        <result column="biz_name" property="bizName" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="str_level" property="strLevel" jdbcType="VARCHAR"/>
+        <result column="up_scale" property="upScale" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <!--<resultMap id="CategoryJsonMap" type="com.xiaowo.goods.basicapi.category.json.CategoryJson">-->
+        <!--<id     column="id"                 property="id"               jdbcType="BIGINT"   />-->
+        <!--<result column="category_name"      property="categoryName"     jdbcType="VARCHAR"  />-->
+        <!--<result column="pid"                property="pid"              jdbcType="BIGINT"   />-->
+        <!--<result column="biz_id"             property="bizId"            jdbcType="BIGINT"   />-->
+        <!--<result column="level"              property="level"            jdbcType="INTEGER"  />-->
+        <!--<result column="str_level"          property="strLevel"         jdbcType="VARCHAR"/>-->
+        <!--<result column="up_scale"           property="upScale"          jdbcType="DECIMAL"/>-->
+    <!--</resultMap>-->
+
+    <!--根据id查询分类信息-->
+    <select id="getCategoryById" resultMap="CategoryPojoMap" parameterType="java.lang.Long">
+        SELECT
+        id,
+        category_name,
+        pid,
+        biz_id,
+        str_level,
+        up_scale
+        FROM goods_category
+        WHERE id=#{id,jdbcType=BIGINT}
+    </select>
+
+     <!--根据业态或分类名称查询一级分类 列表-->
+    <select id="getCategoryList" parameterType="com.xiaowo.goods.basicapi.category.param.CategoryListParam"
+            resultMap="CategoryJsonMap">
+
+        SELECT c.id,c.category_name,c.pid,c.biz_id,c.level,c.str_level,b.biz_name,c.up_scale
+        FROM goods_category c LEFT JOIN goods_biz_type b ON c.biz_id=b.id
+        WHERE c.`level`=1  and c.state=1 and b.state=1
+        <if test="bizId!=0">
+            AND c.biz_id=#{bizId,jdbcType=INTEGER}
+        </if>
+        <if test="categoryName!='' and categoryName!=null">
+            AND c.category_name like CONCAT('%','${categoryName}','%' )
+        </if>
+        ORDER BY c.id ASC
+        limit #{currentCount},#{pageSize}
+    </select>
+
+    <!-- 根据业态或分类名称查询一级分类 列表 总条数-->
+    <select id="getCategoryListCount" parameterType="com.xiaowo.goods.basicapi.category.param.CategoryListParam"
+            resultType="java.lang.Long">
+        SELECT
+        count(c.id)
+        FROM goods_category c LEFT JOIN goods_biz_type b ON c.biz_id=b.id
+        WHERE c.`level`=1  and c.state=1 and b.state=1
+        <if test="bizId!=0">
+            AND c.biz_id=#{bizId,jdbcType=INTEGER}
+        </if>
+        <if test="categoryName!='' and categoryName!=null">
+            AND c.category_name like CONCAT('%','${categoryName}','%' )
+        </if>
+    </select>
+
+    <!--查询对应业态id下面分类数量-->
+    <select id="getCategoryCount"
+            resultType="java.lang.Long">
+        SELECT
+        count(id)
+        FROM goods_category
+        WHERE biz_id=#{bizId,jdbcType=INTEGER}  and state=1
+    </select>
+
+    <!--根据分类名称模糊搜索分类列表-->
+    <!--根据分类名称模糊搜索分类列表 总条数-->
+
+    <!--根据pid查询分类信息-->
+    <select id="getCategoryByPid" resultMap="CategoryJsonMap">
+        SELECT c.id,c.category_name,c.pid,c.biz_id,c.level,c.str_level,b.biz_name,c.up_scale
+        FROM goods_category c LEFT JOIN goods_biz_type b ON c.biz_id =b.id
+        WHERE  c.state=1 and b.state=1
+        <if test="pid > -1 ">
+            and  c.pid=#{pid,jdbcType=BIGINT}
+        </if>
+    </select>
+
+    <select id="getGoodsAndCategoryCount" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT
+        count(id)
+        FROM
+        goods_goods
+        WHERE category_id = #{categoryId}
+    </select>
+
+
+    <select id="getCategoryAndAllChildByStrLevel"  resultMap="CategoryJsonMap">
+        SELECT c.id,c.category_name,c.pid,c.biz_id,c.level,c.str_level,b.biz_name
+        FROM goods_category c LEFT JOIN goods_biz_type b ON c.biz_id=b.id
+        WHERE c.state=1 and c.str_level LIKE '${strLevel}'
+    </select>
+
+    <select id="getAllCategoryByBizId"  resultMap="CategoryJsonMap">
+        SELECT
+        id,
+        category_name,
+        pid,
+        biz_id,
+        level
+        FROM
+        goods_category
+        WHERE biz_id = #{0} AND state = 1
+    </select>
+
+</mapper>

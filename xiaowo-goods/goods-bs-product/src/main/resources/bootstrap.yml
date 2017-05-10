@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: goods-bs-product
+  http:
+    encoding: { charset: UTF-8, enable: true, force: true }
+info:
+  component: goods-bs-product

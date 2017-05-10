@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaowo.goods.basic.mapper.write.ICategoryWriteMapper">
+
+    <!-- 新增分类 -->
+    <insert id="insertCategory" parameterType="CategoryPojo">
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+        </selectKey>
+        INSERT INTO goods_category (
+        category_name,
+        pid,
+        biz_id,
+        `level`,
+        state,
+        str_level,
+        update_time,
+        create_time
+        )
+        VALUES
+        (
+        #{categoryName},
+        #{pid},
+        #{bizId},
+        #{level},
+        #{state},
+        #{strLevel},
+        #{updateTime},
+        #{createTime}
+        )
+    </insert>
+
+    <!--删除分类-->
+    <update id="deleteCategory" parameterType="java.lang.Long">
+        UPDATE
+        goods_category
+        SET
+        state = 0
+        WHERE id = #{id}
+    </update>
+
+    <!--更新分类-->
+    <update id="updateCategory" parameterType="CategoryPojo">
+        UPDATE
+        goods_category
+        SET
+        category_name = #{categoryName},
+        update_time = #{updateTime}
+        WHERE
+        id = #{id}
+    </update>
+
+    <!--更新分类的str_level字段-->
+    <update id="updateStrLevel" parameterType="CategoryPojo">
+        UPDATE
+        goods_category
+        SET
+        str_level = #{strLevel}
+        WHERE
+        id = #{id}
+    </update>
+</mapper>
