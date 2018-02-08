@@ -1,7 +1,0 @@
-rootProject.name = 'xiaowo-goods'
-include 'goods-bs-basic'
-include 'goods-bs-basicapi'
-include 'common-bs-util'
-include 'goods-bs-product'
-include 'goods-bs-productapi'
-
