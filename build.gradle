@@ -1,0 +1,29 @@
+subprojects {
+    ext {
+//        xiaowoMvnRepoRrlBase = "http://10.10.10.60:8081/nexus/content"
+    }
+    configurations {
+        compile.exclude module: "spring-boot-starter-tomcat"
+        compile.exclude module: "jsr311-api"
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+
+    repositories {
+        mavenLocal()
+        maven { url "http://repo.spring.io/libs-release" }
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+    }
+
+    version = '1.0'
+
+    jar {
+//        manifest.attributes provider: 'xiaowo'
+    }
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+}
